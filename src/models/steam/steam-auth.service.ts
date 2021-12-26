@@ -2,15 +2,12 @@ import { CACHE_MANAGER, Inject, Injectable } from "@nestjs/common";
 import * as SteamCommunity from "steamcommunity";
 import * as TradeOfferManager from "steam-tradeoffer-manager";
 import { Cache } from "cache-manager";
-import { BotInventoryItem } from "../common/interfaces/inventory-response";
 
 const code = "Y3VY4";
 const logOnOptions1 = {
   accountName: "skeef77",
   password: "A737101298TE",
   twoFactorCode: code,
-  // captcha: "UKMF9M",
-  // steamguard: ""
 };
 
 @Injectable()
@@ -21,7 +18,9 @@ export class SteamService {
   private steamguard: string;
   private oAuthToken: string;
   private cookies: string[];
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {
     this.steamCommunity = new SteamCommunity()
     this.manager = new TradeOfferManager()
     this.inventory = null
@@ -125,67 +124,5 @@ export class SteamService {
         this.managerSetCookies(cookies);
       }
     )
-  }
-
-  async getInventory(): Promise<BotInventoryItem[]> {
-    const result: Promise<BotInventoryItem[]> = new Promise((resolve) => {
-      this.manager.getInventoryContents(730, 2, true, (err, inventory) => {
-        if (err) {
-          console.log(err);
-          return null;
-        }
-
-        if (inventory.length == 0) {
-          console.log("CS:GO inventory is empty");
-          return null;
-        }
-
-        console.log("Found " + inventory.length + " CS:GO items");
-
-        this.inventory = inventory;
-
-        resolve(inventory)
-      });
-    });
-
-    return result.then((data) => data)
-  }
-
-  async tradeSell(items: string[]): Promise<void> {
-    const inv = await this.getInventory()
-    const findItems = inv.filter((invItem) => items.includes(invItem.id))
-    const offer = this.manager.createOffer(
-      "https://steamcommunity.com/tradeoffer/new/?partner=1191511061&token=LxFZ3-cK"
-    );
-    offer.addMyItems(findItems);
-    offer.setMessage("TEST API");
-    offer.send((err, status) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-
-      if (status == "pending") {
-        // We need to confirm it
-        console.log(`Offer #${offer.id} sent, but requires confirmation`);
-        this.steamCommunity.acceptConfirmationForObject(
-          code,
-          offer.id,
-          function (err) {
-            if (err) {
-              console.log(err);
-            } else {
-              console.log("Offer confirmed");
-            }
-          }
-        );
-      } else {
-        console.log(`Offer #${offer.id} sent successfully`);
-      }
-    });
-  }
-
-  tradeBuy(): void {
-    console.log('tradeBuy');
   }
 }

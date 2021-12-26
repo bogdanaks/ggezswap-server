@@ -7,7 +7,7 @@ import {
   InventoryResponse,
   RgDescriptionsResponse,
   RgInventoryResponse,
-} from "../common/interfaces/inventory-response";
+} from "../../common/interfaces/inventory-response";
 
 const steamApi = axios.create({
   baseURL: "https://steamcommunity.com",

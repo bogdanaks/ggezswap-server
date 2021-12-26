@@ -17,5 +17,11 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "providers/*": ["./src/providers/*"],
+      "models/*": ["./src/models/*"],
+      "config/*": ["./src/config/*"],
+      "interceptors/*": ["./src/common/interceptors/*"],
+    }
   }
 }

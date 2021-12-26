@@ -1,6 +1,6 @@
 import { Controller, Get, UseInterceptors, Request, Param, Post } from "@nestjs/common";
 import { UsersService } from './users.service';
-import { ResponseInterceptor } from '../common/interceptors/response.interceptor';
+import { ResponseInterceptor } from '../../common/interceptors/response.interceptor';
 import { GetUserInventoryParamDto } from './dto/get-user-inventory.dto';
 
 @UseInterceptors(ResponseInterceptor)
